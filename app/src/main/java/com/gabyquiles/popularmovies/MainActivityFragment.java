@@ -1,6 +1,5 @@
 package com.gabyquiles.popularmovies;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,40 +28,54 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
     private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+    private final String PARCELABLE_MOVIES_KEY = "movie";
+    private final String PARCELABLE_SORTING_KEY = "sorting";
     protected ThumbnailAdapter adapter;
-
-    public MainActivityFragment() {
-    }
+    private ArrayList<Movie> list = new ArrayList<>();
+    private String sortOrder = "";
 
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null && savedInstanceState.containsKey(PARCELABLE_MOVIES_KEY)) {
+            list = savedInstanceState.getParcelableArrayList(PARCELABLE_MOVIES_KEY);
+            sortOrder = savedInstanceState.getString(PARCELABLE_SORTING_KEY);
+        }
         updateMovies();
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle instanceState) {
+        instanceState.putParcelableArrayList(PARCELABLE_MOVIES_KEY, list);
+        instanceState.putString(PARCELABLE_SORTING_KEY, sortOrder);
+        super.onSaveInstanceState(instanceState);
+    }
+
     private void updateMovies() {
-        Activity parent = getActivity();
-        FetchMoviesTask task = new FetchMoviesTask();
-        //Remeber that this preferences are the DEFAULT
-        //SharedPreferences postalCode = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        //String zip = postalCode.getString(parent.getString(R.string.pref_location_key), parent.getString(R.string.pref_location_default));
-        task.execute();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        String newSortOrder = sharedPreferences.getString(
+                getString(R.string.pref_sort_order_key),
+                getString(R.string.pref_sort_order_default));
+        if(sortOrder != newSortOrder) {
+            sortOrder = newSortOrder;
+            FetchMoviesTask task = new FetchMoviesTask();
+            task.execute(sortOrder);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        List<Movie> posters = new ArrayList<>();
 
-        adapter = new ThumbnailAdapter(getActivity(), R.layout.movie_grid_cell, posters);
+        adapter = new ThumbnailAdapter(getActivity(), R.layout.movie_grid_cell, list);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container);
 
@@ -90,11 +103,13 @@ public class MainActivityFragment extends Fragment {
 
         @Override
         protected Movie[] doInBackground(String... params) {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            //If no param there is nothing to get
+            if(params.length == 0) {
+                return null;
+            }
 
-            String sortOrder = sharedPreferences.getString(
-                    getString(R.string.pref_sort_order_key),
-                    getString(R.string.pref_sort_order_default));
+            String sorting = params[0];
+
             String apiKey = "bee86948b9e4fac93a62b0c5afe7ad27";
 
             HttpURLConnection urlConnection = null;
@@ -109,7 +124,7 @@ public class MainActivityFragment extends Fragment {
                         .appendPath("3")
                         .appendPath("discover")
                         .appendPath("movie")
-                        .appendQueryParameter("sort_by", sortOrder)
+                        .appendQueryParameter("sort_by", sorting)
                         .appendQueryParameter("api_key", apiKey);
 
                 String urlString = builder.build().toString();
