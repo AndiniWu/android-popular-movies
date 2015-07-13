@@ -1,5 +1,19 @@
 <resources>
     <string name="app_name">PopularMovies</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Label for units preference [CHAR LIMIT=30] -->
+    <string name="pref_sort_order_label">Sort Order</string>
+    <!-- Key name for storing units in SharedPreferences [CHAR LIMIT=NONE] -->
+    <string name="pref_sort_order_key" translatable="false">sort_order</string>
+    <!-- Default value for units preference -->
+    <string name="pref_sort_order_default" translatable="false">popularity.desc</string>
+
+    <!-- Labels for Units preference -->
+    <string name="pref_sort_order_popularity_label">Most Popular</string>
+    <string name="pref_sort_order_rating_label">Highest Rated</string>
+    <!-- Values for Units preference -->
+    <string name="pref_sort_order_popularity_value">popularity.desc</string>
+    <string name="pref_sort_order_rating_value">vote_average.desc</string>
+    <string name="title_activity_movie_detail">MovieDetail</string>
 </resources>
