@@ -34,6 +34,7 @@ import java.util.ArrayList;
  */
 public class MainActivityFragment extends Fragment {
     private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+    //Used to store app state
     private final String PARCELABLE_MOVIES_KEY = "movie";
     private final String PARCELABLE_SORTING_KEY = "sorting";
     protected ThumbnailAdapter adapter;
@@ -44,10 +45,16 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Restore app if it was previousy opened
         if (savedInstanceState != null && savedInstanceState.containsKey(PARCELABLE_MOVIES_KEY)) {
             list = savedInstanceState.getParcelableArrayList(PARCELABLE_MOVIES_KEY);
             sortOrder = savedInstanceState.getString(PARCELABLE_SORTING_KEY);
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         updateMovies();
     }
 
@@ -64,6 +71,7 @@ public class MainActivityFragment extends Fragment {
         String newSortOrder = sharedPreferences.getString(
                 getString(R.string.pref_sort_order_key),
                 getString(R.string.pref_sort_order_default));
+        // ReFetch information only if sorting order has changed
         if(sortOrder != newSortOrder) {
             sortOrder = newSortOrder;
             FetchMoviesTask task = new FetchMoviesTask();
@@ -110,6 +118,7 @@ public class MainActivityFragment extends Fragment {
 
             String sorting = params[0];
 
+            // Does information as api keys should be in code?
             String apiKey = "bee86948b9e4fac93a62b0c5afe7ad27";
 
             HttpURLConnection urlConnection = null;
@@ -129,7 +138,7 @@ public class MainActivityFragment extends Fragment {
 
                 String urlString = builder.build().toString();
                 URL url = new URL(urlString);
-                // Create the request to OpenWeatherMap, and open the connection
+                // Create the request and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -158,7 +167,7 @@ public class MainActivityFragment extends Fragment {
                 moviesJsonStr = buffer.toString();
             } catch (IOException e) {
                 Log.e(this.LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
+                // If the code didn't successfully get the data, there's no point in attemping
                 // to parse it.
                 return null;
             } finally{

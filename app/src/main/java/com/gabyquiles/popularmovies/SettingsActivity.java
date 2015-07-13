@@ -3,26 +3,16 @@ package com.gabyquiles.popularmovies;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
-
-import java.util.List;
-
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -77,15 +67,6 @@ public class SettingsActivity extends AppCompatActivity {
             return super.onOptionsItemSelected(item);
         }
 
-
-        /**
-         * {@inheritDoc}
-         */
-//        @Override
-//        public boolean onIsMultiPane() {
-//            return isXLargeTablet(this);
-//        }
-
         /**
          * Helper method to determine if the device has an extra-large screen. For
          * example, 10" tablets are extra-large.
@@ -94,16 +75,6 @@ public class SettingsActivity extends AppCompatActivity {
             return (context.getResources().getConfiguration().screenLayout
                     & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
         }
-
-
-        /**
-         * {@inheritDoc}
-         */
-//        @Override
-//        @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-//        public void onBuildHeaders(List<Header> target) {
-//            loadHeadersFromResource(R.xml.pref_headers, target);
-//        }
 
 /**
  * A preference value change listener that updates the preference's summary
