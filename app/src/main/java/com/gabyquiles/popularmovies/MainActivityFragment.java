@@ -3,6 +3,7 @@ package com.gabyquiles.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -74,7 +75,7 @@ public class MainActivityFragment extends Fragment {
                 getString(R.string.pref_sort_order_key),
                 getString(R.string.pref_sort_order_default));
         // ReFetch information only if sorting order has changed
-        if(sortOrder != newSortOrder) {
+        if(!sortOrder.equals(newSortOrder)) {
             sortOrder = newSortOrder;
             movieService.getMovies(sortOrder, API_KEY,new Callback<MoviePage>() {
                 @Override
@@ -102,10 +103,10 @@ public class MainActivityFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container);
 
-        GridView list = (GridView) rootView.findViewById(R.id.gridview_movies);
+        GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
 
-        list.setAdapter(adapter);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -117,6 +118,14 @@ public class MainActivityFragment extends Fragment {
                 context.startActivity(intent);
             }
         });
+
+        int orientation = getResources().getConfiguration().orientation;
+        int numColumns = GridView.AUTO_FIT;
+        if ( orientation == Configuration.ORIENTATION_LANDSCAPE ) {
+            numColumns = 3;
+        }
+
+        gridView.setNumColumns(numColumns);
 
         return rootView;
     }
