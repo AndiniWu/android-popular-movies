@@ -8,12 +8,26 @@ package com.gabyquiles.popularmovies.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Movie implements Parcelable{
+    @Expose
     private Long id;
+    @SerializedName("poster_path")
+    @Expose
     private String posterPath;
+    @SerializedName("original_title")
+    @Expose
     private String title;
+    @SerializedName("overview")
+    @Expose
     private String synopsis;
+    @SerializedName("vote_average")
+    @Expose
     private String userRating;
+    @SerializedName("release_date")
+    @Expose
     private String releaseDate;
 
     public Movie(Long id, String title, String posterPath, String synopsis, String userRating, String releaseDate) {
