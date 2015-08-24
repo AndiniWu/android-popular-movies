@@ -78,21 +78,31 @@ public class MainActivityFragment extends Fragment {
         // ReFetch information only if sorting order has changed
         if(!mSortOrder.equals(newSortOrder)) {
             mSortOrder = newSortOrder;
-            mMovieService.getMovies(mSortOrder, getString(R.string.moviedb_api_key), new Callback<MoviePage>() {
-                @Override
-                public void success(MoviePage movies, Response response) {
-                    if (movies != null && !movies.isEmpty()) {
-                        mAdapter.clear();
-                        mAdapter.addAll(movies.getMovies());
+            if(mSortOrder == getString(R.string.pref_sort_order_favorite_value)) {
+                mAdapter.clear();
+                MovieSelection movies = new MovieSelection();
+                movies.orderByMoviedbId();
+                MovieCursor cursor = movies.query(getActivity().getContentResolver());
+                while (cursor.moveToNext()) {
+                    mAdapter.add(new Movie(cursor));
+                }
+            } else {
+                mMovieService.getMovies(mSortOrder, getString(R.string.moviedb_api_key), new Callback<MoviePage>() {
+                    @Override
+                    public void success(MoviePage movies, Response response) {
+                        if (movies != null && !movies.isEmpty()) {
+                            mAdapter.clear();
+                            mAdapter.addAll(movies.getMovies());
+                        }
                     }
-                }
 
-                @Override
-                public void failure(RetrofitError error) {
-                    int i = 2;
-                }
+                    @Override
+                    public void failure(RetrofitError error) {
+                        int i = 2;
+                    }
 
-            });
+                });
+            }
         }
     }
 

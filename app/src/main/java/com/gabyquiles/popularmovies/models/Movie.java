@@ -8,6 +8,8 @@ package com.gabyquiles.popularmovies.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.gabyquiles.popularmovies.provider.movie.MovieCursor;
+import com.gabyquiles.popularmovies.provider.movie.MovieModel;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -48,6 +50,17 @@ public class Movie implements Parcelable{
         this.synopsis = in.readString();
         this.userRating = in.readString();
         this.releaseDate = in.readString();
+    }
+
+    public Movie(MovieCursor cursor) {
+        id = cursor.getMoviedbId();
+        posterPath = cursor.getPosterPath();
+        title = cursor.getTitle();
+        synopsis = cursor.getSynopsis();
+        userRating = cursor.getUserRating();
+        releaseDate = cursor.getReleaseDate();
+        // If received from MovieCursor means it is saved on Favorite DB
+        favorited = true;
     }
 
     public Long getId() {

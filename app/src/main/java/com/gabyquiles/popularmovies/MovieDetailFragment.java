@@ -165,7 +165,7 @@ public class MovieDetailFragment extends Fragment {
         values.putMoviedbId(movie.getId());
         values.putPosterPath(movie.getPosterPath());
         values.putReleaseDate(movie.getReleaseDate());
-        values.putSinopsis(movie.getSynopsis());
+        values.putSynopsis(movie.getSynopsis());
         values.putTitle(movie.getTitle());
         values.putUserRating(movie.getUserRating());
 

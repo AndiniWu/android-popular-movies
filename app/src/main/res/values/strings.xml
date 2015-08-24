@@ -16,9 +16,13 @@
     <!-- Labels for Units preference -->
     <string name="pref_sort_order_popularity_label">Most Popular</string>
     <string name="pref_sort_order_rating_label">Highest Rated</string>
+    <string name="pref_sort_order_favorite_label">Favorites</string>
     <!-- Values for Units preference -->
     <string name="pref_sort_order_popularity_value">popularity.desc</string>
     <string name="pref_sort_order_rating_value">vote_average.desc</string>
+    <string name="pref_sort_order_favorite_value">favorite</string>
+
+
     <string name="title_activity_movie_detail">MovieDetail</string>
 
     <string name="trailer_title">Trailers:</string>
