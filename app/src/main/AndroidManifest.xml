@@ -27,13 +27,18 @@
                 android:value="com.gabyquiles.popularmovies.MainActivity" />
         </activity>
         <activity
-            android:name=".MovieDetail"
+            android:name=".MovieDetailActivity"
             android:label="@string/title_activity_movie_detail"
             android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.gabyquiles.popularmovies.MainActivity" />
         </activity>
+
+        <provider
+            android:name="com.gabyquiles.popularmovies.provider.MovieProvider"
+            android:authorities="com.gabyquiles.popularmovies.provider"
+            android:exported="false" />
     </application>
 
 </manifest>

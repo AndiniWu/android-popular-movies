@@ -1,0 +1,41 @@
+{
+  "fields": [
+    {
+      "documentation": "Id in MovieDB",
+      "name": "moviedb_id",
+      "type": "Long",
+      "index": true,
+      "nullable": false
+    },
+    {
+      "documentation": "Title of the movie.",
+      "name": "title",
+      "type": "String"
+    },
+    {
+      "documentation": "Date in which the movie will be released.",
+      "name": "release_date",
+      "type": "String"
+    },
+    {
+      "name": "sinopsis",
+      "type": "String"
+    },
+    {
+      "name": "poster_path",
+      "type": "String"
+    },
+    {
+      "name": "user_rating",
+      "type": "String"
+    }
+
+  ],
+
+  "constraints": [
+    {
+      "name": "unique_moviedb_id",
+      "definition": "UNIQUE (moviedb_id) ON CONFLICT REPLACE"
+    }
+  ]
+}

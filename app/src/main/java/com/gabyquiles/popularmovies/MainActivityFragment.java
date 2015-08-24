@@ -17,6 +17,9 @@ import android.widget.GridView;
 import com.gabyquiles.popularmovies.api.MovieDBService;
 import com.gabyquiles.popularmovies.models.Movie;
 import com.gabyquiles.popularmovies.models.MoviePage;
+import com.gabyquiles.popularmovies.provider.movie.MovieColumns;
+import com.gabyquiles.popularmovies.provider.movie.MovieCursor;
+import com.gabyquiles.popularmovies.provider.movie.MovieSelection;
 
 import java.util.ArrayList;
 
@@ -33,12 +36,10 @@ public class MainActivityFragment extends Fragment {
     //Used to store app state
     private final String PARCELABLE_MOVIES_KEY = "movie";
     private final String PARCELABLE_SORTING_KEY = "sorting";
-    private final String API_URL = "http://api.themoviedb.org/3";
-    private final String API_KEY = "bee86948b9e4fac93a62b0c5afe7ad27";
-    protected ThumbnailAdapter adapter;
-    private ArrayList<Movie> list = new ArrayList<>();
-    private String sortOrder = "";
-    private MovieDBService movieService;
+    protected ThumbnailAdapter mAdapter;
+    private ArrayList<Movie> mList = new ArrayList<>();
+    private String mSortOrder = "";
+    private MovieDBService mMovieService;
 
 
     @Override
@@ -46,13 +47,13 @@ public class MainActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Restore app if it was previousy opened
         if (savedInstanceState != null && savedInstanceState.containsKey(PARCELABLE_MOVIES_KEY)) {
-            list = savedInstanceState.getParcelableArrayList(PARCELABLE_MOVIES_KEY);
-            sortOrder = savedInstanceState.getString(PARCELABLE_SORTING_KEY);
+            mList = savedInstanceState.getParcelableArrayList(PARCELABLE_MOVIES_KEY);
+            mSortOrder = savedInstanceState.getString(PARCELABLE_SORTING_KEY);
         }
 
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setLogLevel(RestAdapter.LogLevel.FULL).setEndpoint(API_URL).build();
-        movieService = restAdapter.create(MovieDBService.class);
+                .setLogLevel(RestAdapter.LogLevel.FULL).setEndpoint(getString(R.string.moviedb_api_url)).build();
+        mMovieService = restAdapter.create(MovieDBService.class);
     }
 
     @Override
@@ -63,8 +64,8 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle instanceState) {
-        instanceState.putParcelableArrayList(PARCELABLE_MOVIES_KEY, list);
-        instanceState.putString(PARCELABLE_SORTING_KEY, sortOrder);
+        instanceState.putParcelableArrayList(PARCELABLE_MOVIES_KEY, mList);
+        instanceState.putString(PARCELABLE_SORTING_KEY, mSortOrder);
         super.onSaveInstanceState(instanceState);
     }
 
@@ -75,14 +76,14 @@ public class MainActivityFragment extends Fragment {
                 getString(R.string.pref_sort_order_key),
                 getString(R.string.pref_sort_order_default));
         // ReFetch information only if sorting order has changed
-        if(!sortOrder.equals(newSortOrder)) {
-            sortOrder = newSortOrder;
-            movieService.getMovies(sortOrder, API_KEY,new Callback<MoviePage>() {
+        if(!mSortOrder.equals(newSortOrder)) {
+            mSortOrder = newSortOrder;
+            mMovieService.getMovies(mSortOrder, getString(R.string.moviedb_api_key), new Callback<MoviePage>() {
                 @Override
                 public void success(MoviePage movies, Response response) {
-                    if(movies != null && !movies.isEmpty()) {
-                        adapter.clear();
-                        adapter.addAll(movies.getMovies());
+                    if (movies != null && !movies.isEmpty()) {
+                        mAdapter.clear();
+                        mAdapter.addAll(movies.getMovies());
                     }
                 }
 
@@ -99,23 +100,27 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        adapter = new ThumbnailAdapter(getActivity(), R.layout.movie_grid_cell, list);
+        mAdapter = new ThumbnailAdapter(getActivity(), R.layout.movie_grid_cell, mList);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container);
 
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
 
-        gridView.setAdapter(adapter);
+        gridView.setAdapter(mAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Movie selected_movie = mAdapter.getItem(position);
 
-                Context context = getActivity();
-                Movie selected_movie = adapter.getItem(position);
-                Log.v(LOG_TAG, selected_movie.getTitle());
-                Intent intent = new Intent(context, MovieDetail.class);
-                intent.putExtra(MainActivity.MOVIE_DATA, selected_movie);
-                context.startActivity(intent);
+                String[] db_columns = { MovieColumns.MOVIEDB_ID };
+                MovieSelection movie_db = new MovieSelection();
+                movie_db.moviedbId(selected_movie.getId());
+                MovieCursor cursor = movie_db.query(getActivity().getContentResolver(), db_columns);
+                if(cursor.getCount() > 0) {
+                    selected_movie.setFavorited(true);
+                }
+                cursor.close();
+                ((MainActivity) getActivity()).onItemSelected(selected_movie);
             }
         });
 
@@ -128,5 +133,10 @@ public class MainActivityFragment extends Fragment {
         gridView.setNumColumns(numColumns);
 
         return rootView;
+    }
+
+    // This transmits clicks on grid items to activity
+    public interface SelectionCallback {
+        void onItemSelected(Movie selected_movie);
     }
 }

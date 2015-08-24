@@ -1,0 +1,13 @@
+{
+  "syntaxVersion": 3,
+  "projectPackageId": "com.gabyquiles.popularmovies",
+  "authority": "com.gabyquiles.popularmovies.provider",
+  "providerJavaPackage": "com.gabyquiles.popularmovies.provider",
+  "providerClassName": "MovieProvider",
+  "sqliteOpenHelperClassName": "MovieDBHelper",
+  "sqliteOpenHelperCallbacksClassName": "MovieDBHelperCallbacks",
+  "databaseFileName": "popularmovies.db",
+  "databaseVersion": 1,
+  "enableForeignKeys": true,
+  "useAnnotations": true
+}

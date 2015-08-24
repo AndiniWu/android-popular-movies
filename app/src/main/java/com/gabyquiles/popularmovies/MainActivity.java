@@ -6,13 +6,37 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+import com.gabyquiles.popularmovies.models.Movie;
+
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.SelectionCallback{
     public final static String MOVIE_DATA = "com.gabyquiles.popularmovews.MOVIE_DETAILS";
+    private static final String MOVIEDETAILS_TAG = "MDTAG";
+
+    private boolean mTwoPane;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (findViewById(R.id.movie_detail_container) != null) {
+            // The detail container view will be present only in the large-screen layouts
+            // (res/layout-sw600dp). If this view is present, then the activity should be
+            // in two-pane mode.
+            mTwoPane = true;
+            // In two-pane mode, show the detail view in this activity by
+            // adding or replacing the detail fragment using a
+            // fragment transaction.
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.movie_detail_container, new MovieDetailFragment(), MOVIEDETAILS_TAG)
+                        .commit();
+            }
+        } else {
+            mTwoPane = false;
+            // Put the action bar at the same plane as the other elements, removing the shadow
+            getSupportActionBar().setElevation(0f);
+        }
     }
 
 
@@ -38,5 +62,24 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemSelected(Movie selected_movie) {
+        if(mTwoPane) {
+            Bundle args = new Bundle();
+            args.putParcelable(MovieDetailFragment.DETAILED_MOVIE, selected_movie);
+
+            MovieDetailFragment fragment = new MovieDetailFragment();
+            fragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.movie_detail_container, fragment, MOVIEDETAILS_TAG)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, MovieDetailActivity.class);
+            intent.putExtra(MainActivity.MOVIE_DATA, selected_movie);
+            startActivity(intent);
+        }
     }
 }

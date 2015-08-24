@@ -29,6 +29,7 @@ public class Movie implements Parcelable{
     @SerializedName("release_date")
     @Expose
     private String releaseDate;
+    private boolean favorited = false;
 
     public Movie(Long id, String title, String posterPath, String synopsis, String userRating, String releaseDate) {
         this.id = id;
@@ -37,6 +38,7 @@ public class Movie implements Parcelable{
         this.synopsis = synopsis;
         this.userRating = userRating;
         this.releaseDate = releaseDate;
+        this.favorited = false;
     }
 
     private Movie(Parcel in) {
@@ -46,6 +48,10 @@ public class Movie implements Parcelable{
         this.synopsis = in.readString();
         this.userRating = in.readString();
         this.releaseDate = in.readString();
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getTitle() {
@@ -70,6 +76,14 @@ public class Movie implements Parcelable{
 
     public String getPosterURI(String size) {
         return "http://image.tmdb.org/t/p/" + size + "/" + this.posterPath;
+    }
+
+    public void setFavorited(boolean favorite) {
+        this.favorited = favorite;
+    }
+
+    public boolean isFavorited() {
+        return favorited;
     }
 
     @Override

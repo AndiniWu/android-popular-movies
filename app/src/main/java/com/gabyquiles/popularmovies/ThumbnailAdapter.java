@@ -20,7 +20,6 @@ import java.util.List;
 
 public class ThumbnailAdapter extends ArrayAdapter<Movie> {
     private int adapterLayout;
-    //private List<String> list;
 
     public ThumbnailAdapter(Activity context, int viewResourceId, List<Movie> list) {
         super(context,viewResourceId,list);
