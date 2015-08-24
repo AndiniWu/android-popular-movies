@@ -5,19 +5,20 @@ import com.google.gson.annotations.Expose;
 import java.util.List;
 
 /**
- * Created by gabrielquiles-perez on 7/17/15.
+ * Created by gabrielquiles-perez on 8/24/15.
  */
-public class MoviePage {
+public class Page<T> {
     @Expose
     private int page;
     @Expose
-    private List<Movie> results;
+    private List<T> results;
 
-    public List<Movie> getMovies() {
+    public List<T> getResults() {
         return results;
     }
 
     public boolean isEmpty() {
         return results.isEmpty();
     }
+
 }

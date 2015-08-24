@@ -19,8 +19,8 @@ import android.widget.TextView;
 
 import com.gabyquiles.popularmovies.api.MovieDBService;
 import com.gabyquiles.popularmovies.models.Movie;
+import com.gabyquiles.popularmovies.models.Page;
 import com.gabyquiles.popularmovies.models.Trailer;
-import com.gabyquiles.popularmovies.models.TrailersPage;
 import com.gabyquiles.popularmovies.provider.movie.MovieContentValues;
 import com.gabyquiles.popularmovies.provider.movie.MovieSelection;
 import com.squareup.picasso.Picasso;
@@ -79,13 +79,13 @@ public class MovieDetailFragment extends Fragment {
 
             fillMovieDetails(rootView, mMovie);
 
-            mMovieService.getTrailers(mMovie.getId(), getString(R.string.moviedb_api_key), new Callback<TrailersPage>() {
+            mMovieService.getTrailers(mMovie.getId(), getString(R.string.moviedb_api_key), new Callback<Page<Trailer>>() {
                 @Override
-                public void success(TrailersPage trailerPage, Response response) {
+                public void success(Page<Trailer> trailerPage, Response response) {
                     Log.v(LOG_TAG, "Success");
                     if (trailerPage != null && !trailerPage.isEmpty()) {
                         mAdapter.clear();
-                        mTrailers = (ArrayList) trailerPage.getTrailers();
+                        mTrailers = (ArrayList<Trailer>) trailerPage.getResults();
                         for (Trailer trailer: mTrailers) {
                             mAdapter.add(trailer.getName());
                             Log.v(LOG_TAG, trailer.getName());

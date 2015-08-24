@@ -1,13 +1,10 @@
 package com.gabyquiles.popularmovies;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +13,7 @@ import android.widget.GridView;
 
 import com.gabyquiles.popularmovies.api.MovieDBService;
 import com.gabyquiles.popularmovies.models.Movie;
-import com.gabyquiles.popularmovies.models.MoviePage;
+import com.gabyquiles.popularmovies.models.Page;
 import com.gabyquiles.popularmovies.provider.movie.MovieColumns;
 import com.gabyquiles.popularmovies.provider.movie.MovieCursor;
 import com.gabyquiles.popularmovies.provider.movie.MovieSelection;
@@ -87,12 +84,12 @@ public class MainActivityFragment extends Fragment {
                     mAdapter.add(new Movie(cursor));
                 }
             } else {
-                mMovieService.getMovies(mSortOrder, getString(R.string.moviedb_api_key), new Callback<MoviePage>() {
+                mMovieService.getMovies(mSortOrder, getString(R.string.moviedb_api_key), new Callback<Page<Movie>>() {
                     @Override
-                    public void success(MoviePage movies, Response response) {
+                    public void success(Page<Movie> movies, Response response) {
                         if (movies != null && !movies.isEmpty()) {
                             mAdapter.clear();
-                            mAdapter.addAll(movies.getMovies());
+                            mAdapter.addAll(movies.getResults());
                         }
                     }
 

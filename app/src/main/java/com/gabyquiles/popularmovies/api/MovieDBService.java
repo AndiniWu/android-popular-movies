@@ -1,7 +1,9 @@
 package com.gabyquiles.popularmovies.api;
 
-import com.gabyquiles.popularmovies.models.MoviePage;
-import com.gabyquiles.popularmovies.models.TrailersPage;
+import com.gabyquiles.popularmovies.models.Movie;
+import com.gabyquiles.popularmovies.models.Page;
+import com.gabyquiles.popularmovies.models.Review;
+import com.gabyquiles.popularmovies.models.Trailer;
 
 
 import retrofit.Callback;
@@ -14,7 +16,9 @@ import retrofit.http.Query;
  */
 public interface MovieDBService {
     @GET("/discover/movie")
-    void getMovies(@Query("sort_by") String sorting, @Query("api_key") String api_key, Callback<MoviePage> movies);
+    void getMovies(@Query("sort_by") String sorting, @Query("api_key") String api_key, Callback<Page<Movie>> movies);
     @GET("/movie/{id}/videos")
-    void getTrailers(@Path("id") Long id, @Query("api_key") String api_key, Callback<TrailersPage> trailers);
+    void getTrailers(@Path("id") Long id, @Query("api_key") String api_key, Callback<Page<Trailer>> trailers);
+    @GET("/movie/{id}/reviews")
+    void getReviews(@Path("id") Long id, @Query("api_key") String api_key, Callback<Page<Review>> reviews);
 }
