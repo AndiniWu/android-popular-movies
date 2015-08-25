@@ -7,9 +7,17 @@ import com.google.gson.annotations.Expose;
  */
 public class Review {
     @Expose
-    private Long id;
+    private String id;
     @Expose
     private String author;
     @Expose
     private String content;
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getContent() {
+        return content;
+    }
 }

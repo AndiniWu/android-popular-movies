@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.gabyquiles.popularmovies.api.MovieDBService;
 import com.gabyquiles.popularmovies.models.Movie;
 import com.gabyquiles.popularmovies.models.Page;
+import com.gabyquiles.popularmovies.models.Review;
 import com.gabyquiles.popularmovies.models.Trailer;
 import com.gabyquiles.popularmovies.provider.movie.MovieContentValues;
 import com.gabyquiles.popularmovies.provider.movie.MovieSelection;
@@ -39,8 +40,10 @@ public class MovieDetailFragment extends Fragment {
     private final String LOG_TAG = MovieDetailFragment.class.getSimpleName();
     public static final String DETAILED_MOVIE = "detailed_movie";
     private MovieDBService mMovieService;
-    private ArrayAdapter<String> mAdapter;
+    private ArrayAdapter<String> mTrailersAdapter;
+    private ReviewAdapter mReviewsAdapter;
     private ArrayList<Trailer> mTrailers = new ArrayList<>();
+    private ArrayList<Review> mReviews = new ArrayList<>();
     private Movie mMovie;
 
     private ImageView mPosterView;
@@ -49,6 +52,7 @@ public class MovieDetailFragment extends Fragment {
     private TextView mSynopsisView;
     private TextView mDateView;
     private ListView mTrailersListView;
+    private ListView mReviewsListView;
     private ImageButton mFavoriteButton;
 
 
@@ -71,8 +75,9 @@ public class MovieDetailFragment extends Fragment {
             mMovie = arguments.getParcelable(MovieDetailFragment.DETAILED_MOVIE);
         }
 
-        mAdapter = new ArrayAdapter<>(getActivity(), R.layout.trailer_list_item, R.id.text1,
+        mTrailersAdapter = new ArrayAdapter<>(getActivity(), R.layout.trailer_list_item, R.id.text1,
                 new ArrayList<String>());
+        mReviewsAdapter = new ReviewAdapter(getActivity(), R.layout.review_list_item, new ArrayList<Review>());
 
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         if(mMovie != null) {
@@ -82,13 +87,11 @@ public class MovieDetailFragment extends Fragment {
             mMovieService.getTrailers(mMovie.getId(), getString(R.string.moviedb_api_key), new Callback<Page<Trailer>>() {
                 @Override
                 public void success(Page<Trailer> trailerPage, Response response) {
-                    Log.v(LOG_TAG, "Success");
                     if (trailerPage != null && !trailerPage.isEmpty()) {
-                        mAdapter.clear();
+                        mTrailersAdapter.clear();
                         mTrailers = (ArrayList<Trailer>) trailerPage.getResults();
-                        for (Trailer trailer: mTrailers) {
-                            mAdapter.add(trailer.getName());
-                            Log.v(LOG_TAG, trailer.getName());
+                        for (Trailer trailer : mTrailers) {
+                            mTrailersAdapter.add(trailer.getName());
                         }
                     }
                 }
@@ -96,6 +99,24 @@ public class MovieDetailFragment extends Fragment {
                 @Override
                 public void failure(RetrofitError error) {
                     Log.v(LOG_TAG, "Failed: " + error.getMessage());
+                }
+            });
+
+            mMovieService.getReviews(mMovie.getId(), getString(R.string.moviedb_api_key), new Callback<Page<Review>>() {
+                @Override
+                public void success(Page<Review> reviewPage, Response response) {
+                    Log.v(LOG_TAG, "success: ");
+                    if (reviewPage != null && !reviewPage.isEmpty()) {
+                        mReviewsAdapter.clear();
+                        mReviews = (ArrayList<Review>) reviewPage.getResults();
+                        mReviewsAdapter.addAll(mReviews);
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.v(LOG_TAG, "Failed: " + error.getMessage());
+
                 }
             });
         }
@@ -137,7 +158,7 @@ public class MovieDetailFragment extends Fragment {
 
         // Trailers
         mTrailersListView = (ListView) rootView.findViewById(R.id.trailers_listView);
-        mTrailersListView.setAdapter(mAdapter);
+        mTrailersListView.setAdapter(mTrailersAdapter);
         mTrailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -147,6 +168,8 @@ public class MovieDetailFragment extends Fragment {
         });
 
         // Reviews
+        mReviewsListView = (ListView) rootView.findViewById(R.id.reviews_listView);
+        mReviewsListView.setAdapter(mReviewsAdapter);
     }
 
     private void getTrailerIntent(String id) {
