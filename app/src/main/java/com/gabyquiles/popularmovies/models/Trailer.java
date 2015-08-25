@@ -47,6 +47,14 @@ public class Trailer implements Parcelable {
         return 0;
     }
 
+    public String getIntentUri() {
+        return "vnd.youtube:" + id;
+    }
+
+    public String getUrl() {
+        return "http://www.youtube.com/watch?v="+id;
+    }
+
     @Override
     public void writeToParcel(Parcel parcel, int position) {
         parcel.writeString(id);

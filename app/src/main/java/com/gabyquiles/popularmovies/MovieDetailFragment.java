@@ -163,7 +163,7 @@ public class MovieDetailFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Trailer trailer = mTrailers.get(position);
-                getTrailerIntent(trailer.getKey());
+                getTrailerIntent(trailer);
             }
         });
 
@@ -172,15 +172,15 @@ public class MovieDetailFragment extends Fragment {
         mReviewsListView.setAdapter(mReviewsAdapter);
     }
 
-    private void getTrailerIntent(String id) {
+    private void getTrailerIntent(Trailer trailer) {
+        Intent intent;
         try{
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
-            startActivity(intent);
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse(trailer.getIntentUri()));
         }catch (ActivityNotFoundException ex){
-            Intent intent=new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("http://www.youtube.com/watch?v="+id));
-            startActivity(intent);
+            intent=new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(trailer.getUrl()));
         }
+        startActivity(intent);
     }
 
     private long saveMovieFavorite(Movie movie) {
